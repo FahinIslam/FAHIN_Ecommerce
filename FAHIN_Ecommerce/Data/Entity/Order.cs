@@ -17,7 +17,5 @@ namespace FAHIN_Ecommerce.Data.Entity
 
         public string? shippingAddress { get; set; }
         public string? paymentMethod { get; set; }
-
-        public virtual ICollection<OrderItem> orderItems { get; set; } = new List<OrderItem>();
     }
 }

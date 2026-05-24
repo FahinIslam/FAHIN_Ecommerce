@@ -15,7 +15,5 @@ namespace FAHIN_Ecommerce.Data.Entity
 
         [ForeignKey("parentCategoryId")]
         public virtual Category? parentCategory { get; set; }
-        public virtual ICollection<Category> subCategories { get; set; } = new List<Category>();
-        public virtual ICollection<Product> products { get; set; } = new List<Product>();
     }
 }
