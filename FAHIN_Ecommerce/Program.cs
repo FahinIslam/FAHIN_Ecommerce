@@ -3,6 +3,7 @@ using FAHIN_Ecommerce.Context;
 using FAHIN_Ecommerce.Models;
 using FAHIN_Ecommerce.Data.Entity;
 using FAHIN_Ecommerce.Services;
+using FAHIN_Ecommerce.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

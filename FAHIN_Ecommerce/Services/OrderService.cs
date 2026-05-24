@@ -1,15 +1,10 @@
 using FAHIN_Ecommerce.Context;
 using FAHIN_Ecommerce.Data.Entity;
+using FAHIN_Ecommerce.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace FAHIN_Ecommerce.Services
 {
-    public interface IOrderService
-    {
-        Task<int> PlaceOrderAsync(string userId, int productId, int quantity, string? ipAddress, string? userAgent);
-        Task<Order?> GetOrderDetailsAsync(int orderId);
-    }
-
     public class OrderService : IOrderService
     {
         private readonly dbContext _context;

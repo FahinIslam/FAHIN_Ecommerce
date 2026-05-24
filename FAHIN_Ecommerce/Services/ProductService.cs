@@ -1,19 +1,10 @@
 using FAHIN_Ecommerce.Context;
 using FAHIN_Ecommerce.Data.Entity;
+using FAHIN_Ecommerce.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace FAHIN_Ecommerce.Services
 {
-    public interface IProductService
-    {
-        Task<IEnumerable<Product>> GetAllProductsAsync();
-        Task<Product?> GetProductByIdAsync(int id);
-        Task<int> CreateProductAsync(Product product);
-        Task<bool> UpdateProductAsync(Product product);
-        Task<bool> DeleteProductAsync(int id);
-    }
-
     public class ProductService : IProductService
     {
         private readonly dbContext _context;

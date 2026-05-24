@@ -1,15 +1,10 @@
 using FAHIN_Ecommerce.Context;
 using FAHIN_Ecommerce.Data.Entity;
+using FAHIN_Ecommerce.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace FAHIN_Ecommerce.Services
 {
-    public interface ICategoryService
-    {
-        Task<IEnumerable<Category>> GetCategoriesAsync();
-        Task<Category?> GetCategoryByIdAsync(int id);
-    }
-
     public class CategoryService : ICategoryService
     {
         private readonly dbContext _context;

@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace FAHIN_Ecommerce.Services
+namespace FAHIN_Ecommerce.Services.Interfaces
 {
     public interface IJwtFactoryService
     {
