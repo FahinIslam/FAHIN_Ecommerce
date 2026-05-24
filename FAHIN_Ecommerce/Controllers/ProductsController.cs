@@ -1,32 +1,27 @@
-using FAHIN_Ecommerce.Context;
+using FAHIN_Ecommerce.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace FAHIN_Ecommerce.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly dbContext _context;
+        private readonly IProductService _productService;
 
-        public ProductsController(dbContext context)
+        public ProductsController(IProductService productService)
         {
-            _context = context;
+            _productService = productService;
         }
 
-        public async Task<IActionResult> Index(int? categoryId)
+        public async Task<IActionResult> Index()
         {
-            var products = categoryId.HasValue 
-                ? await _context.Products.Where(p => p.categoryId == categoryId).ToListAsync()
-                : await _context.Products.ToListAsync();
+            var products = await _productService.GetAllProductsAsync();
             return View(products);
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var product = await _context.Products
-                .Include(p => p.category)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = await _productService.GetProductByIdAsync(id);
 
             if (product == null)
             {

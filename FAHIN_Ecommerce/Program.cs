@@ -82,6 +82,9 @@ builder.Services.AddAuthorization(option => {
 
 builder.Services.AddScoped<IAuthorizationHandler, UserAccessPageHandler>();
 builder.Services.AddSingleton<IGlobalDataService, GlobalDataService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 builder.Services.AddAuthentication()
     .AddJwtBearer(configureOptions =>

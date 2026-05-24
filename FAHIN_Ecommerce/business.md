@@ -1,35 +1,21 @@
 # FAHIN Ecommerce Business Logic & Architecture
 
 ## Overview
-FAHIN Ecommerce is a high-performance, scalable monolith application built on .NET 8/10 and Razor Views. It is designed to handle millions of users with a strict emphasis on performance and data integrity.
+FAHIN Ecommerce is a high-performance, scalable monolith application built on .NET 8/10 and Razor Views. It follows a decoupled architecture where the database context is kept minimal, and all business logic resides in a dedicated service layer.
 
-## Architectural Strategy: One-Way Data Binding
-To target millions of users without crashing the system, we have implemented **One-Way Data Binding** in our domain models. 
-- **Explicit Navigation**: We have removed `ICollection<T>` navigation properties from all entities. 
-- **Performance Benefits**: This prevents EF Core from accidentally performing large, implicit joins or "lazy loading" massive collections of data (e.g., loading thousands of products when querying a category).
-- **Control**: All relationship data must be queried explicitly. This ensures that developers are always aware of the data volume being retrieved, leading to more optimized SQL queries and lower memory consumption.
+## Architectural Strategy: Clean Separation of Concerns
+To ensure the system remains robust while targeting millions of users, we have implemented a strict separation between data access and business logic:
+- **Minimal dbContext**: The `dbContext` class is strictly limited to constructors and `DbSet` declarations. It contains no methods, functions, or model configuration logic.
+- **Service Layer**: All data operations—including soft-delete filtering (`isDelete == 0`), audit field population (`createdAt`, `createdBy`), and transactional integrity—are handled within specialized services (`ProductService`, `OrderService`, etc.).
+- **Controller-Service Interaction**: Controllers never interact with the `dbContext` directly. They rely on the service layer to perform all data-related tasks. This ensures that business rules are applied consistently across the entire application.
 
-## Core Components
+## Key Scalability Features
+- **Manual Filtering**: By handling soft-delete filters in the service layer, we maintain full control over query performance and prevent unnecessary overhead in the ORM.
+- **Async Execution**: Every database operation is executed asynchronously to maximize the throughput of the server.
+- **Audit Consistency**: Audit trails are managed centrally within the service layer, ensuring that every record's lineage is accurately preserved.
+- **One-Way Data Binding**: Entities remain lightweight and independent, avoiding the pitfalls of deep object graphs and circular dependencies.
 
-### 1. Identity & Access Management
-- **ApplicationUser**: Extended Identity user with profile management.
-- **ApplicationRole**: Custom roles for Admin and Customer access.
-- **JWT + Cookie Auth**: Secure multi-channel authentication as per `Info.md`.
-
-### 2. Domain Entities (`Data\Entity`)
-- **BaseEntity**: Unified structure with `camelCase` audit fields (`isDelete`, `createdAt`, etc.).
-- **Category**: Hierarchical organization using `parentCategoryId`.
-- **Product**: Indexed catalog items optimized for high-speed lookup.
-- **Order & OrderItem**: Transactional records with fixed unit prices at purchase time.
-- **PurchaseLog**: High-fidelity audit trail for all sales transactions.
-
-### 3. Data Access (`Context\dbContext.cs`)
-- **IdentityDbContext**: Integrated with custom identity entities.
-- **High Timeout**: Configured for large-scale data operations as specified in `Info.md`.
-- **Global Query Filters**: Automated handling of soft deletes across the entire platform.
-- **Auditing**: Automatic population of audit fields using `IHttpContextAccessor`.
-
-## Scaling for Millions
-- **SQL Indexing**: Strategic indexes on `name`, `userId`, `categoryId`, and `orderDate`.
-- **Asynchronous Flow**: 100% async database operations to maximize thread pool efficiency.
-- **Monolith Efficiency**: Server-side rendering with Razor Views reduces client-side processing overhead and improves SEO.
+## Security & Access
+- **Identity Integration**: Fully integrated with ASP.NET Core Identity for secure user and role management.
+- **Role-Based UI**: Dynamic layout switching ensures that Admins and General Users receive an interface tailored to their specific roles and permissions.
+- **JWT Authentication**: Prepared for multi-platform support with token-based authentication services.

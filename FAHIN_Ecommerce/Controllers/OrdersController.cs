@@ -1,5 +1,4 @@
-using FAHIN_Ecommerce.Context;
-using FAHIN_Ecommerce.Data.Entity;
+using FAHIN_Ecommerce.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -10,16 +9,18 @@ namespace FAHIN_Ecommerce.Controllers
     [Authorize]
     public class OrdersController : Controller
     {
-        private readonly dbContext _context;
+        private readonly IOrderService _orderService;
+        private readonly IProductService _productService;
 
-        public OrdersController(dbContext context)
+        public OrdersController(IOrderService orderService, IProductService productService)
         {
-            _context = context;
+            _orderService = orderService;
+            _productService = productService;
         }
 
-        public IActionResult Checkout(int productId)
+        public async Task<IActionResult> Checkout(int productId)
         {
-            var product = _context.Products.Find(productId);
+            var product = await _productService.GetProductByIdAsync(productId);
             if (product == null) return NotFound();
             return View(product);
         }
@@ -27,51 +28,29 @@ namespace FAHIN_Ecommerce.Controllers
         [HttpPost]
         public async Task<IActionResult> PlaceOrder(int productId, int quantity)
         {
-            var product = await _context.Products.FindAsync(productId);
-            if (product == null) return NotFound();
-
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) return Unauthorized();
 
-            var order = new Order
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+            var userAgent = Request.Headers["User-Agent"].ToString();
+
+            try
             {
-                userId = userId,
-                orderDate = DateTime.UtcNow,
-                totalAmount = product.price * quantity,
-                status = "Pending"
-            };
-
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync(); // Get the order Id
-
-            var orderItem = new OrderItem
+                var orderId = await _orderService.PlaceOrderAsync(userId, productId, quantity, ipAddress, userAgent);
+                return RedirectToAction("Success", new { orderId = orderId });
+            }
+            catch (Exception ex)
             {
-                orderId = order.Id,
-                productId = productId,
-                quantity = quantity,
-                unitPrice = product.price
-            };
-            _context.OrderItems.Add(orderItem);
-
-            var purchaseLog = new PurchaseLog
-            {
-                userId = userId,
-                productId = productId,
-                quantity = quantity,
-                totalPrice = product.price * quantity,
-                ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
-                userAgent = Request.Headers["User-Agent"].ToString(),
-                details = $"Order placed for {product.name} (Qty: {quantity})"
-            };
-
-            _context.PurchaseLogs.Add(purchaseLog);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("Success", new { orderId = order.Id });
+                ModelState.AddModelError(string.Empty, ex.Message);
+                var product = await _productService.GetProductByIdAsync(productId);
+                return View("Checkout", product);
+            }
         }
 
-        public IActionResult Success(int orderId)
+        public async Task<IActionResult> Success(int orderId)
         {
+            var order = await _orderService.GetOrderDetailsAsync(orderId);
+            if (order == null) return NotFound();
             ViewBag.OrderId = orderId;
             return View();
         }
