@@ -11,12 +11,12 @@ namespace FAHIN_Ecommerce.Data.Entity
         [Required]
         public string description { get; set; } = string.Empty;
         [Column(TypeName = "decimal(18,2)")]
-        public decimal price { get; set; }
-        public int stockQuantity { get; set; }
+        public decimal? price { get; set; }
+        public int? stockQuantity { get; set; }
         public string? imageUrl { get; set; }
-        public int categoryId { get; set; }
+        public int? categoryId { get; set; }
 
         [ForeignKey("categoryId")]
-        public virtual Category category { get; set; } = null!;
+        public  Category category { get; set; }
     }
 }

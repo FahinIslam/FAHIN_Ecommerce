@@ -14,6 +14,6 @@ namespace FAHIN_Ecommerce.Data.Entity
         public int? parentCategoryId { get; set; }
 
         [ForeignKey("parentCategoryId")]
-        public virtual Category? parentCategory { get; set; }
+        public Category? parentCategory { get; set; }
     }
 }
