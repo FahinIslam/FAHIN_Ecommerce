@@ -155,11 +155,105 @@ namespace UMOJA_ZAMBIA.Context
 
         }
 
-        public dbContext(DbContextOptions<dbContext> options, IHttpContextAccessor _httpContextAccessor) : base(options)
-        {
-            this._httpContextAccessor = _httpContextAccessor;
-            Database.SetCommandTimeout(2500000);
-        }
+#region SQL Server Scripts for Identity Tables
+/*
+-- AspNetRoles Table
+CREATE TABLE [dbo].[AspNetRoles] (
+    [Id]               NVARCHAR (450) NOT NULL,
+    [Name]             NVARCHAR (256) NULL,
+    [NormalizedName]   NVARCHAR (256) NULL,
+    [ConcurrencyStamp] NVARCHAR (MAX) NULL,
+    [description]      NVARCHAR (MAX) NULL, -- Custom property
+    CONSTRAINT [PK_AspNetRoles] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [RoleNameIndex] ON [dbo].[AspNetRoles]([NormalizedName] ASC) WHERE ([NormalizedName] IS NOT NULL);
+GO
+
+-- AspNetUsers Table
+CREATE TABLE [dbo].[AspNetUsers] (
+    [Id]                   NVARCHAR (450)     NOT NULL,
+    [UserName]             NVARCHAR (256)     NULL,
+    [NormalizedUserName]   NVARCHAR (256)     NULL,
+    [Email]                NVARCHAR (256)     NULL,
+    [NormalizedEmail]      NVARCHAR (256)     NULL,
+    [EmailConfirmed]       BIT                NOT NULL,
+    [PasswordHash]         NVARCHAR (MAX)     NULL,
+    [SecurityStamp]        NVARCHAR (MAX)     NULL,
+    [ConcurrencyStamp]     NVARCHAR (MAX)     NULL,
+    [PhoneNumber]          NVARCHAR (MAX)     NULL,
+    [PhoneNumberConfirmed] BIT                NOT NULL,
+    [TwoFactorEnabled]     BIT                NOT NULL,
+    [LockoutEnd]           DATETIMEOFFSET (7) NULL,
+    [LockoutEnabled]       BIT                NOT NULL,
+    [AccessFailedCount]    INT                NOT NULL,
+    [fullName]             NVARCHAR (100)     NOT NULL, -- Custom property
+    [profilePicture]       NVARCHAR (MAX)     NULL,     -- Custom property
+    [createdAt]            DATETIME2 (7)      NULL,     -- Custom property
+    [isActive]             BIT                NOT NULL, -- Custom property
+    CONSTRAINT [PK_AspNetUsers] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+GO
+CREATE NONCLUSTERED INDEX [EmailIndex] ON [dbo].[AspNetUsers]([NormalizedEmail] ASC);
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [UserNameIndex] ON [dbo].[AspNetUsers]([NormalizedUserName] ASC) WHERE ([NormalizedUserName] IS NOT NULL);
+GO
+
+-- AspNetUserRoles Table
+CREATE TABLE [dbo].[AspNetUserRoles] (
+    [UserId] NVARCHAR (450) NOT NULL,
+    [RoleId] NVARCHAR (450) NOT NULL,
+    CONSTRAINT [PK_AspNetUserRoles] PRIMARY KEY CLUSTERED ([UserId] ASC, [RoleId] ASC),
+    CONSTRAINT [FK_AspNetUserRoles_AspNetRoles_RoleId] FOREIGN KEY ([RoleId]) REFERENCES [dbo].[AspNetRoles] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_AspNetUserRoles_AspNetUsers_UserId] FOREIGN KEY ([UserId]) REFERENCES [dbo].[AspNetUsers] ([Id]) ON DELETE CASCADE
+);
+GO
+CREATE NONCLUSTERED INDEX [IX_AspNetUserRoles_RoleId] ON [dbo].[AspNetUserRoles]([RoleId] ASC);
+GO
+
+-- Other Identity Tables (Optional but recommended)
+CREATE TABLE [dbo].[AspNetUserClaims] (
+    [Id]         INT            IDENTITY (1, 1) NOT NULL,
+    [UserId]     NVARCHAR (450) NOT NULL,
+    [ClaimType]  NVARCHAR (MAX) NULL,
+    [ClaimValue] NVARCHAR (MAX) NULL,
+    CONSTRAINT [PK_AspNetUserClaims] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_AspNetUserClaims_AspNetUsers_UserId] FOREIGN KEY ([UserId]) REFERENCES [dbo].[AspNetUsers] ([Id]) ON DELETE CASCADE
+);
+GO
+*/
+
+/*
+-- SEED DATA INSERT SCRIPTS
+
+-- 1. Insert Roles
+INSERT INTO [dbo].[AspNetRoles] ([Id], [Name], [NormalizedName], [description])
+VALUES 
+(NEWID(), 'Admin', 'ADMIN', 'System Administrator with full access'),
+(NEWID(), 'Customer', 'CUSTOMER', 'General user with shopping access');
+GO
+
+-- 2. Insert Categories
+INSERT INTO [dbo].[Categories] ([name], [description], [isDelete], [createdAt], [createdBy])
+VALUES 
+('Electronics', 'Gadgets, devices and more', 0, GETUTCDATE(), 'System'),
+('Clothing', 'Apparel and accessories', 0, GETUTCDATE(), 'System'),
+('Home & Garden', 'Furniture and home decor', 0, GETUTCDATE(), 'System');
+GO
+
+-- 3. Insert Products
+-- Note: Replace @CatId1, @CatId2 with actual IDs from the Categories table after execution
+DECLARE @CatId1 INT = (SELECT TOP 1 Id FROM Categories WHERE name = 'Electronics');
+DECLARE @CatId2 INT = (SELECT TOP 1 Id FROM Categories WHERE name = 'Clothing');
+
+INSERT INTO [dbo].[Products] ([name], [description], [price], [stockQuantity], [categoryId], [isDelete], [createdAt], [createdBy])
+VALUES 
+('High-End Laptop', 'Powerful laptop for professionals', 1500.00, 50, @CatId1, 0, GETUTCDATE(), 'System'),
+('Smartphone Pro', 'Latest flagship smartphone', 999.99, 100, @CatId1, 0, GETUTCDATE(), 'System'),
+('Cotton T-Shirt', 'Comfortable daily wear t-shirt', 19.99, 500, @CatId2, 0, GETUTCDATE(), 'System');
+GO
+*/
+#endregion
 
 
 

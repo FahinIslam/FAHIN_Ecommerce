@@ -1,0 +1,51 @@
+@model FAHIN_Ecommerce.Data.Entity.Product
+
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<h1>Checkout</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                Order Summary
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        @if (!string.IsNullOrEmpty(Model.imageUrl))
+                        {
+                            <img src="@Model.imageUrl" class="img-fluid rounded" alt="@Model.name">
+                        }
+                    </div>
+                    <div class="col-md-9">
+                        <h5>@Model.name</h5>
+                        <p>Price: $@Model.price</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form asp-action="PlaceOrder" method="post">
+            <input type="hidden" name="productId" value="@Model.Id" />
+            <div class="card">
+                <div class="card-header">
+                    Shipping & Payment
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Shipping Address</label>
+                        <textarea name="shippingAddress" class="form-control" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" name="quantity" value="1" min="1" class="form-control" style="width: 100px;" />
+                    </div>
+                    <button type="submit" class="btn btn-success btn-block w-100">Confirm Order</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

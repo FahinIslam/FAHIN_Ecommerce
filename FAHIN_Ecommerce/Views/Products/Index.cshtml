@@ -1,0 +1,27 @@
+@model IEnumerable<FAHIN_Ecommerce.Data.Entity.Product>
+
+@{
+    ViewData["Title"] = "Products";
+}
+
+<h1>Products</h1>
+
+<div class="row">
+    @foreach (var item in Model) {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                @if (!string.IsNullOrEmpty(item.imageUrl))
+                {
+                    <img src="@item.imageUrl" class="card-img-top" alt="@item.name">
+                }
+                <div class="card-body">
+                    <h5 class="card-title">@item.name</h5>
+                    <p class="card-text text-truncate">@item.description</p>
+                    <p class="card-text"><strong>Price:</strong> $@item.price</p>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">View Details</a>
+                    <a asp-controller="Orders" asp-action="Checkout" asp-route-productId="@item.Id" class="btn btn-success">Buy Now</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
