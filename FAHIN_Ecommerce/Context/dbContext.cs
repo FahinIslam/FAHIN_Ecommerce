@@ -7,15 +7,15 @@ namespace FAHIN_Ecommerce.Context
 {
     public class dbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor? _httpContextAccessor;
 
         public dbContext()
         {
         }
 
-        public dbContext(DbContextOptions<dbContext> options, IHttpContextAccessor _httpContextAccessor) : base(options)
+        public dbContext(DbContextOptions<dbContext> options, IHttpContextAccessor? httpContextAccessor) : base(options)
         {
-            this._httpContextAccessor = _httpContextAccessor;
+            this._httpContextAccessor = httpContextAccessor;
             Database.SetCommandTimeout(2500000);
         }
 

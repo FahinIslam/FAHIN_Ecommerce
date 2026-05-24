@@ -14,8 +14,8 @@ namespace FAHIN_Ecommerce.Data.Entity
         public DateTime? createdAt { get; set; }
         public DateTime? updatedAt { get; set; }
         [MaxLength(250)]
-        public string createdBy { get; set; }
+        public string? createdBy { get; set; }
         [MaxLength(250)]
-        public string updatedBy { get; set; }
+        public string? updatedBy { get; set; }
     }
 }

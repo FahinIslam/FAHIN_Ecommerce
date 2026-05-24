@@ -23,7 +23,7 @@ namespace FAHIN_Ecommerce.Services
             var claims = new[]
             {
                  new Claim(JwtRegisteredClaimNames.Sub, userName),
-                 new Claim(JwtRegisteredClaimNames.Jti, await _jwtOptions.SigningCredentials!.Key.ToString().Substring(0, 10).ToLower().Replace("-","")!),
+                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                  new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer64),
                  identity.FindFirst(Constants.Strings.JwtClaimIdentifiers.Rol),
                  identity.FindFirst(Constants.Strings.JwtClaimIdentifiers.Id)
