@@ -1,0 +1,4 @@
+@{
+    var layout = ViewData["Layout"] as string;
+    Layout = !string.IsNullOrEmpty(layout) ? layout : "_Layout";
+}
